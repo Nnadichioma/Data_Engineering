@@ -18,7 +18,7 @@ The part that is easy to miss is that the goal is not just *moving* data. It is 
 
 - **On time**: it arrives when people expect it
 - **Correct**: it matches the source and the business rules
-- **Hands-off**: it runs without anyone babysitting it
+- **Hands-off**: it runs without manual effort
 
 ### How this differs from a Data Analyst (where I'm coming from)
 
