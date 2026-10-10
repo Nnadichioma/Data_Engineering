@@ -62,7 +62,52 @@ A lot of the real job is **fix mode**. Writing a pipeline is one skill. Keeping 
 
 ---
 
-## 3. Is this the right path for me?
+## 3. How data moves: flow vs pipeline structure
+
+These are two views of the same thing. The **data flow** is *what happens to the data*. The **pipeline structure** is *how that flow is built and run automatically*.
+
+### View 1: The data flow (concept)
+
+```
+Sources → Ingest/Extract → Raw storage → Transform → Load/Serve → Consumers
+                 (orchestration + monitoring across all steps)
+```
+
+| Stage | What happens |
+|---|---|
+| **Sources** | Databases, APIs, CSV/Excel files, SaaS tools, event streams, logs |
+| **Ingest / Extract** | Pulling data out of the source, in batches or continuously (ingest and extract are basically the same step) |
+| **Raw storage** | Data saved exactly as it arrived (bronze layer in a lakehouse). Keeping the raw copy means I can reprocess if something goes wrong |
+| **Transform** | Cleaning and reshaping: remove duplicates, fix types, handle nulls, join tables, apply business rules (silver and gold layers) |
+| **Load / Serve** | Final data goes into target tables, such as a warehouse or gold layer, shaped by data models like star schemas |
+| **Consumers** | Analysts, dashboards, data scientists, applications. This is where I used to sit |
+
+**ETL vs ELT:** in ETL, data is transformed *before* loading. In ELT, it's loaded raw first and transformed inside the warehouse (usually with SQL and dbt). ELT is very common in modern cloud setups.
+
+### View 2: The pipeline structure (how it's built)
+
+Each stage of the flow becomes a **task**, and tasks are linked into a **DAG** (directed acyclic graph): steps with a clear order and no loops.
+
+```
+extract_orders → load_raw_orders → clean_orders → build_sales_table → data_quality_check
+```
+
+Boxes are tasks, arrows are dependencies ("don't start until the previous step succeeds"), and the whole chain runs on a schedule. Tools like Airflow or Dagster manage this.
+
+What the structure adds on top of the flow:
+
+- **Scheduling:** when it runs, or what triggers it
+- **Dependencies:** what must finish before the next step starts
+- **Retries and alerts:** what happens when a task fails
+- **Idempotency:** running the same job twice doesn't create duplicates
+- **Backfills:** re-running for past dates when something was wrong
+- **Logging and monitoring:** knowing what ran, when, and whether the data was correct
+
+**Restaurant analogy:** the flow is "ingredients → prep → cooking → plating → table". The pipeline structure is the kitchen's system: who does which step, in what order, what happens if the oven breaks, and how to avoid cooking the same order twice.
+
+---
+
+## 4. Is this the right path for me?
 
 **Why it fits**
 - I already know SQL and how messy real data is
@@ -81,18 +126,18 @@ A lot of the real job is **fix mode**. Writing a pipeline is one skill. Keeping 
 
 ---
 
-## 4. My 12-week plan
+## 5. My 12-week plan
 
 | Weeks | Focus | What I'll do |
 |---|---|---|
-| 1-3 | Foundations | SQL (CTEs, window functions), Python basics, pandas |
+| 1-3 | Foundations | Advanced SQL (CTEs, window functions), Python basics, pandas |
 | 4-6 | First pipelines | Git, local Postgres, API → clean → load script, Docker basics |
 | 7-9 | Real tooling | Airflow or Dagster, dbt, data modeling (star schema, lakehouse) |
 | 10-12 | Capstone | End-to-end scheduled pipeline with data quality checks, documented on GitHub |
 
 ---
 
-## 5. Rules for staying consistent
+## 6. Rules for staying consistent
 
 - Study a little every day; an hour beats one long weekend session
 - Write code myself instead of only watching tutorials
@@ -101,7 +146,7 @@ A lot of the real job is **fix mode**. Writing a pipeline is one skill. Keeping 
 
 ---
 
-## 6. Weekly log
+## 7. Weekly log
 
 | Week | Dates | What I learned / built | What I struggled with |
 |---|---|---|---|
@@ -111,7 +156,7 @@ A lot of the real job is **fix mode**. Writing a pipeline is one skill. Keeping 
 
 ---
 
-## 7. Review at the end of the trial
+## 8. Review at the end of the trial
 
 *(Fill in January 2027)*
 
